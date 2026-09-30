@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgroBoost - Sai Agro Fertilizers</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded">
+  <style>
+  
+        body {
+            margin: 0;
+	    padding:0;
+            font-family: Arial, sans-serif;
+            background: url('b2.jpg') center/cover no-repeat;
+        }
+        header {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+            background: rgba(0,0,0,0.6);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+	.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Make it full screen height */
+    background-image: url('b2.jpg'); /* adjust path if needed */
+    background-size: cover;  /* This will make sure the image covers the whole area */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+        .logo img {
+            width: 60px;
+            border-radius: 50%;
+        }
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+			position:relative;
+			transition:color 0.3s ease;
+        }
+		nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background: #fff;
+    left: 0;
+    bottom: -4px;
+    transition: width 0.3s linear;
+}
+nav ul li a:hover {
+    color: #90ee90; /* Light green or any hover color you like */
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+       button.login-btn {
+    margin-right: 80px;
+    background: white;
+    border: none;
+    padding: 14px 26px; /* Increased padding */
+    border-radius: 8px; /* Slightly more rounded */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px; /* Increased font size */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Optional: subtle shadow */
+    transition: background 0.3s ease;
+}
+
+button.login-btn:hover {
+    background-color: #aaa;
+}
+
+        .form-popup {
+            position: fixed;
+            top: 58%;
+            left: 75%;
+            width: 300px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            transform: translate(-50%, -50%) scale(0);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .form-popup.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-btn:hover {
+            color: #000;
+        }
+        .form-box h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .input-field {
+            margin-bottom: 15px;
+        }
+        .input-field input, .input-field select {
+            width: 90%;
+			margin: 0 auto;
+   			display: block;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button.submit-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button.submit-btn:hover {
+            background: #218838;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .strength-bar {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            border-radius: 5px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .strength-bar div {
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- Header -->
+<header>
+  <a href="#" class="logo">
+    <img src="logo.jpg" alt="Logo">
+    <h2>AgroBoost-Sai Agro Fertilizers</h2>
+  </a>
+  <nav>
+    <ul>
+      <li><a href="#" onclick="openPopup('productsPopup')">Products</a></li>
+      <li><a href="#" onclick="openPopup('aboutPopup')">About Us</a></li>
+      <li><a href="#" onclick="openPopup('contactPopup')">Contact Us</a></li>
+    </ul>
+  </nav>
+  <button class="login-btn" onclick="openForm('login')">LOGIN</button>
+</header>
+
+<!-- Hero Section -->
+<div class="hero">
+  <div class="content"></div>
+</div>
+
+<!-- Login Form -->
+<div class="form-popup" id="loginForm">
+  <span class="close-btn" onclick="closeForm()">×</span>
+  <h2>Login</h2>
+  <form id="loginFormAjax" method="POST">
+    <div class="input-field"><input type="email" name="email" placeholder="Enter Email" required></div>
+    <div class="input-field"><input type="password" name="password" placeholder="Enter Password" required></div>
+    <div class="input-field">
+      <select name="role" required>
+        <option value="">Select Role</option>
+        <option value="admin">Admin</option>
+        <option value="customer">Customer</option>
+      </select>
+    </div>
+    <div class="captcha-box">
+      <img src="captcha.php" alt="CAPTCHA" id="captchaImage">
+      <button type="button" onclick="reloadCaptcha()">↻</button>
+    </div>
+    <div class="input-field"><input type="text" name="captcha" placeholder="Enter CAPTCHA" required></div>
+    <div id="loginErrorMsg" style="color:red;text-align:center;margin-bottom:10px;"></div>
+    <a href="forgot_password.html">Forgot Password?</a><br><br>
+    <button type="submit" class="submit-btn">Login</button>
+    <div class="toggle-link">Don't have an account? <a href="#" onclick="switchForm('signup')">Sign up here</a></div>
+  </form>
+</div>
+
+<!-- Signup Form -->
+<div class="form-popup" id="signupForm">
+  <span class="close-btn" onclick="closeForm()">×</span>
+  <h2>Sign Up</h2>
+  <form id="registerFormAjax" method="POST">
+    <div class="input-field"><input type="text" name="name" placeholder="Enter Name" required></div>
+    <div class="input-field"><input type="email" name="email" placeholder="Enter Email" required></div>
+	<div class="input-field"><input type="tel" name="contact" placeholder="Enter Contact Number" pattern="[0-9]{10}" title="Enter 10-digit phone number" required></div>
+
+    <div class="input-field">
+      <input type="password" id="signupPassword" name="password" placeholder="Create Password" required onkeyup="checkStrength(this.value)">
+    </div>
+    <div class="strength-bar"><div id="strengthLevel"></div></div>
+    <div class="input-field"><input type="password" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" required></div>
+    <div class="captcha-box">
+      <img src="captcha.php" alt="CAPTCHA" id="captchaImageSignup">
+      <button type="button" onclick="reloadCaptchaSignup()">↻</button>
+    </div>
+    <div class="input-field"><input type="text" name="captcha" placeholder="Enter CAPTCHA" required></div>
+    <div id="registerErrorMsg" style="color:red;text-align:center;margin-bottom:10px;"></div>
+    <button type="submit" class="submit-btn">Register</button>
+    <div class="toggle-link">Already have an account? <a href="#" onclick="switchForm('login')">Login here</a></div>
+  </form>
+</div>
+
+<!-- Other Popups (Products, About, Contact) -->
+<!-- ... unchanged -->
+<!-- Products Popup -->
+<div class="form-popup" id="productsPopup">
+    <span class="close-btn" onclick="closePopup('productsPopup')">×</span>
+    <h2>Our Products</h2>
+    <p>
+        ✅ Chemical Fertilizers <br>
+        ✅ Organic Fertilizers <br>
+        ✅ Liquid Fertilizers <br>
+            </p>
+</div>
+
+<!-- About Us Popup -->
+<div class="form-popup" id="aboutPopup">
+    <span class="close-btn" onclick="closePopup('aboutPopup')">×</span>
+    <h2>About Us</h2>
+    <p>At AgroBoost - Sai Agro Fertilizers, we specialize in providing premium quality fertilizers, focusing on healthy crop growth and farmer prosperity. Trusted by hundreds of farmers for sustainable agricultural solutions.</p>
+</div>
+
+<!-- Contact Us Popup -->
+<div class="form-popup" id="contactPopup">
+    <span class="close-btn" onclick="closePopup('contactPopup')">×</span>
+    <h2>Contact Us</h2>
+    <p>
+        📧 Email: saiagrofertilizers59@gmail.com <br>
+        📞 Phone: +91 7204958491 <br>
+        📍 Location: https:AT Ramnagar-581453,KDCC Bank,#542
+    </p>
+</div>
+
+<script>
+  function reloadCaptcha() {
+    document.getElementById('captchaImage').src = 'captcha.php?' + Date.now();
+  }
+
+  function reloadCaptchaSignup() {
+    document.getElementById('captchaImageSignup').src = 'captcha.php?' + Date.now();
+  }
+
+  // Login Form Ajax
+  document.getElementById("loginFormAjax").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    fetch("login.php", { method: "POST", body: data })
+    .then(res => res.json())
+    .then(response => {
+      if (response.success) {
+        location.href = response.redirect || "dashboard.php";
+      } else {
+        document.getElementById("loginErrorMsg").textContent = response.message;
+        reloadCaptcha();
+      }
+    });
+  });
+
+  // Register Form Ajax
+  document.getElementById("registerFormAjax").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const pass = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const errorBox = document.getElementById("registerErrorMsg");
+
+    errorBox.style.color = "red";
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordPattern.test(pass)) {
+      errorBox.textContent = "Password must include uppercase, lowercase, number, and special character.";
+      return;
+    }
+    if (pass !== confirm) {
+      errorBox.textContent = "Passwords do not match!";
+      return;
+    }
+
+    const data = new FormData(form);
+    fetch("register.php", { method: "POST", body: data })
+    .then(res => res.json())
+    .then(response => {
+      if (response.success) {
+        alert("✅ Registration successful! Please login now.");
+        form.reset();
+        document.getElementById("strengthLevel").style.width = "0%";
+        switchForm('login');
+      } else {
+        errorBox.textContent = response.message;
+        reloadCaptchaSignup();
+        form.querySelector('input[name="captcha"]').value = "";
+      }
+    });
+  });
+
+  function closeAllPopups() {
+    const allPopups = ['productsPopup', 'aboutPopup', 'contactPopup', 'loginForm', 'signupForm'];
+    allPopups.forEach(id => document.getElementById(id).classList.remove('active'));
+  }
+
+  function openForm(form) {
+    closeAllPopups();
+    if (form === 'login') document.getElementById('loginForm').classList.add('active');
+    else document.getElementById('signupForm').classList.add('active');
+  }
+
+  function switchForm(form) {
+    openForm(form);
+  }
+
+  function closeForm() {
+    document.getElementById('loginForm').classList.remove('active');
+    document.getElementById('signupForm').classList.remove('active');
+  }
+
+  function checkStrength(password) {
+    const bar = document.getElementById('strengthLevel');
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[\W_]/.test(password)) strength++;
+    bar.style.width = `${strength * 20}%`;
+    bar.style.background = ['#ddd', 'red', 'orange', 'yellow', 'blue', 'green'][strength];
+  }
+
+  function openPopup(id) {
+    closeAllPopups();
+    document.getElementById(id).classList.add('active');
+  }
+
+  function closePopup(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+</script>
+
+
+</body>
+</html>

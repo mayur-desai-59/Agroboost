@@ -1,0 +1,38 @@
+CREATE DATABASE IF NOT EXISTS agroboost;
+USE agroboost;
+
+-- Users Table
+CREATE TABLE agro_users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'customer') DEFAULT 'customer',
+    force_change_password TINYINT(1) DEFAULT 0, -- Force password change
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Products Table
+CREATE TABLE agro_products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL,
+    stock_status ENUM('In Stock', 'Out of Stock') DEFAULT 'In Stock',
+    image_url VARCHAR(255),
+    use_by DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Purchases Table
+CREATE TABLE agro_purchases (
+    purchase_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES agro_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES agro_products(product_id) ON DELETE CASCADE ON UPDATE CASCADE
+);

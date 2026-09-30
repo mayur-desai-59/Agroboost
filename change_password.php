@@ -1,0 +1,143 @@
+<?php
+include 'config.php';
+
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $new_password = mysqli_real_escape_string($conn, $_POST['new_password']);
+
+    if (
+        strlen($new_password) < 8 ||
+        !preg_match('/[a-z]/', $new_password) ||
+        !preg_match('/[A-Z]/', $new_password) ||
+        !preg_match('/[0-9]/', $new_password) ||
+        !preg_match('/[\W_]/', $new_password)
+    ) {
+        $message = "Password must be at least 8 characters with uppercase, lowercase, number, and special character.";
+    } else {
+        $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
+        $update = mysqli_query($conn, "UPDATE agro_users SET password='$hashed_password', force_change_password=0 WHERE email='$email'");
+
+        if ($update) {
+            echo "<script>alert('Password changed successfully! Please log in again.'); window.location.href='main.html';</script>";
+            exit();
+        } else {
+            $message = "Error updating password. Please try again.";
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Password - AgroBoost</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('b1.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .strength-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .strength-bar div {
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Change Your Password</h2>
+
+    <?php if (!empty($message)): ?>
+        <div class="error-message"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+
+    <form method="POST" onsubmit="return checkPasswordsMatch()">
+        <input type="email" name="email" placeholder="Enter your registered Email" required>
+        <input type="password" name="new_password" id="newPassword" placeholder="Enter New Password" required onkeyup="checkStrength(this.value)">
+        <div class="strength-bar"><div id="strengthLevel"></div></div>
+        <input type="password" id="confirmPassword" placeholder="Confirm New Password" required>
+        <button type="submit" name="change_password">Change Password</button>
+    </form>
+</div>
+
+<script>
+function checkStrength(password) {
+    const bar = document.getElementById('strengthLevel');
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[\W_]/.test(password)) strength++;
+    bar.style.width = `${strength * 20}%`;
+    bar.style.background = ['#ddd', 'red', 'orange', 'yellow', 'blue', 'green'][strength];
+}
+
+function checkPasswordsMatch() {
+    const pass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+    if (pass !== confirmPass) {
+        alert("Passwords do not match!");
+        return false;
+    }
+    return true;
+}
+</script>
+</body>
+</html>
